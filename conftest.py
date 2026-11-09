@@ -13,11 +13,13 @@ def driver(request):
 
     options = Options()
 
-    options.add_argument("--start-maximized")
     options.add_argument("--disable-notifications")
+    options.add_argument("--window-size=1920,1080")
 
     if os.getenv("HEADLESS", "false").lower() == "true":
         options.add_argument("--headless=new")
+    else:
+        options.add_argument("--start-maximized")
 
     browser = webdriver.Chrome(options=options)
 

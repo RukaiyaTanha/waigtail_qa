@@ -1,6 +1,6 @@
-
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import ElementClickInterceptedException
 
 from pages.base_page import BasePage
 from config.settings import BASE_URL, PARENT_PAGE_ID
@@ -46,7 +46,7 @@ class PageManagementPage(BasePage):
     def navigate_to_parent_page(self):
 
         self.open_url(
-            f"{BASE_URL}/admin/pages/{PARENT_PAGE_ID}/"
+            f"{BASE_URL}/admin/pages/{PARENT_PAGE_ID}/edit/"
         )
 
     def open_actions_menu(self):
@@ -78,16 +78,28 @@ class PageManagementPage(BasePage):
     def save_draft(self):
 
         save_button = self.wait.until(
+            EC.presence_of_element_located(self.SAVE_DRAFT)
+        )
+
+        self.scroll_to(save_button)
+
+        save_button = self.wait.until(
             EC.element_to_be_clickable(self.SAVE_DRAFT)
         )
-        save_button.click()
 
-    # Wait until Wagtail replaces the old editor button
+        try:
+            save_button.click()
+        except ElementClickInterceptedException:
+            self.driver.execute_script(
+                "arguments[0].click();", save_button
+            )
+
+        # Wait until Wagtail replaces the old editor button
         self.wait.until(
             EC.staleness_of(save_button)
         )
 
-    # Wait for the refreshed title field
+        # Wait for the refreshed title field
         self.wait.until(
             EC.visibility_of_element_located(self.PAGE_TITLE)
         )
@@ -100,9 +112,3 @@ class PageManagementPage(BasePage):
         )
 
         return actual_title == expected_title
-
-    def navigate_to_parent_page(self):
-
-        self.open_url(
-            f"{BASE_URL}/admin/pages/{PARENT_PAGE_ID}/edit/"
-        )

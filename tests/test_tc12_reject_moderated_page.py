@@ -1,9 +1,19 @@
-
 import time
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select, WebDriverWait
+
+
+def scroll_and_click(driver, wait, locator):
+    """Scroll the element into view, then click it."""
+    element = wait.until(EC.presence_of_element_located(locator))
+    driver.execute_script(
+        "arguments[0].scrollIntoView({block: 'center'});", element
+    )
+    element = wait.until(EC.element_to_be_clickable(locator))
+    element.click()
+    return element
 
 
 def test_tc12_reject_moderated_page(admin_driver):
@@ -38,52 +48,33 @@ def test_tc12_reject_moderated_page(admin_driver):
     collection_field.select_by_value("2")
 
     # Step 3: Save the page as a draft
-    save_draft_button = wait.until(
-        EC.element_to_be_clickable((
-            By.CSS_SELECTOR,
-            "button.action-save"
-        ))
+    scroll_and_click(
+        admin_driver,
+        wait,
+        (By.CSS_SELECTOR, "button.action-save")
     )
-    save_draft_button.click()
 
+    # Step 4: Wait for Wagtail to redirect to the new page's editor
     wait.until(
-        EC.presence_of_element_located((By.TAG_NAME, "body"))
+        EC.url_matches(r"/admin/pages/\d+/edit/")
     )
 
-    # Step 4: Find the newly created page in the parent page listing
-    admin_driver.get(
-        "http://127.0.0.1:8000/admin/pages/60/"
-    )
-
-    page_link = wait.until(
-        EC.presence_of_element_located((
-            By.XPATH,
-            f"//a[contains(@href, '/admin/pages/') "
-            f"and contains(@href, '/edit/') "
-            f"and normalize-space()='{page_title}']"
-        ))
-    )
-
-    selected_page_url = page_link.get_attribute("href")
+    selected_page_url = admin_driver.current_url
 
     print("\nCreated page:", page_title)
     print("Editor URL:", selected_page_url)
 
-    # Step 5: Open the newly created draft
-    admin_driver.get(selected_page_url)
-
+    # Step 5: Make sure the editor has loaded
     wait.until(
         EC.presence_of_element_located((By.ID, "id_title"))
     )
 
     # Step 6: Open the dropdown beside Save draft
-    dropdown = wait.until(
-        EC.element_to_be_clickable((
-            By.CSS_SELECTOR,
-            "button.w-dropdown__toggle.button"
-        ))
+    scroll_and_click(
+        admin_driver,
+        wait,
+        (By.CSS_SELECTOR, "button.w-dropdown__toggle.button")
     )
-    dropdown.click()
 
     # Step 7: Submit the draft for moderation
     submit_button = wait.until(
@@ -113,13 +104,11 @@ def test_tc12_reject_moderated_page(admin_driver):
     )
 
     # Step 9: Open the workflow actions dropdown
-    dropdown = wait.until(
-        EC.element_to_be_clickable((
-            By.CSS_SELECTOR,
-            "button.w-dropdown__toggle.button"
-        ))
+    scroll_and_click(
+        admin_driver,
+        wait,
+        (By.CSS_SELECTOR, "button.w-dropdown__toggle.button")
     )
-    dropdown.click()
 
     # Step 10: Select Request changes
     request_changes_button = wait.until(
@@ -164,13 +153,11 @@ def test_tc12_reject_moderated_page(admin_driver):
         EC.presence_of_element_located((By.ID, "id_title"))
     )
 
-    dropdown = wait.until(
-        EC.element_to_be_clickable((
-            By.CSS_SELECTOR,
-            "button.w-dropdown__toggle.button"
-        ))
+    scroll_and_click(
+        admin_driver,
+        wait,
+        (By.CSS_SELECTOR, "button.w-dropdown__toggle.button")
     )
-    dropdown.click()
 
     resubmit_button = wait.until(
         EC.visibility_of_element_located((
