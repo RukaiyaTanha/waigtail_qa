@@ -51,21 +51,27 @@ pipeline {
 
         stage('Check Wagtail Application') {
             steps {
-                bat '''
-                    powershell -NoProfile -ExecutionPolicy Bypass -Command ^
-                    "$url = 'http://127.0.0.1:8000/admin/'; ^
-                    try { ^
-                        $response = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 15; ^
-                        Write-Host 'Wagtail application is reachable.'; ^
-                        Write-Host ('HTTP Status: ' + $response.StatusCode); ^
-                    } catch { ^
-                        Write-Error 'Wagtail application is not reachable at http://127.0.0.1:8000'; ^
-                        Write-Error 'Start the local Wagtail server before running this build.'; ^
-                        exit 1; ^
-                    }"
+                powershell '''
+                    $url = "http://127.0.0.1:8000/admin/"
+
+                    try {
+                        $response = Invoke-WebRequest `
+                            -Uri $url `
+                            -UseBasicParsing `
+                            -TimeoutSec 15
+
+                        Write-Host "Wagtail application is reachable."
+                        Write-Host "HTTP Status: $($response.StatusCode)"
+                    }
+                    catch {
+                        Write-Error "Wagtail application is not reachable."
+                        Write-Error "Check that the server is running at $url"
+                        exit 1
+                    }
                 '''
             }
         }
+
 
         stage('Run Selenium Tests') {
             steps {
