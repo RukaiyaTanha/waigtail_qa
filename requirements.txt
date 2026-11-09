@@ -1,0 +1,6 @@
+pytest
+selenium
+pytest-html
+openpyxl
+requests
+python-dotenv
