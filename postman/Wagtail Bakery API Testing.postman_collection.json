@@ -1,0 +1,1255 @@
+{
+  "info": {
+    "_postman_id": "feb9e4e0-e3e0-4fc2-8b7a-384dbcd645d4",
+    "name": "Wagtail Bakery API Testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "47792427",
+    "_collection_link": "https://go.postman.co/collection/47792427-feb9e4e0-e3e0-4fc2-8b7a-384dbcd645d4?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Pages API",
+      "item": [
+        {
+          "name": "API01 - Get All Pages",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains pages\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.be.an(\"object\");\r",
+                  "    pm.expect(data).to.have.property(\"items\");\r",
+                  "    pm.expect(data.items).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Pagination fields exist\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"meta\");\r",
+                  "    pm.expect(data.meta).to.have.property(\"total_count\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/pages/",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "pages",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API02 - Get Single Page by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains page details\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.be.an(\"object\");\r",
+                  "    pm.expect(data).to.have.property(\"id\");\r",
+                  "    pm.expect(data).to.have.property(\"title\");\r",
+                  "    pm.expect(data).to.have.property(\"meta\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Returned page ID is correct\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(String(data.id)).to.eql(\r",
+                  "        String(pm.environment.get(\"page_id\"))\r",
+                  "    );\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Page title is not empty\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.title).to.be.a(\"string\").and.not.empty;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/pages/{{page_id}}/",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "pages",
+                "{{page_id}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API03 - Get Pages with Specific Fields",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains page items\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"items\");\r",
+                  "    pm.expect(data.items).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Requested fields exist in page results\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    if (data.items.length > 0) {\r",
+                  "        const page = data.items[0];\r",
+                  "\r",
+                  "        pm.expect(page).to.have.property(\"id\");\r",
+                  "        pm.expect(page).to.have.property(\"title\");\r",
+                  "        pm.expect(page).to.have.property(\"meta\");\r",
+                  "    }\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Page IDs are numeric\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    data.items.forEach(function (page) {\r",
+                  "        pm.expect(page.id).to.be.a(\"number\");\r",
+                  "    });\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/pages/?fields=title",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "pages",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "fields",
+                  "value": "title"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API04 - Get Pages with Pagination",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Pagination metadata exists\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"meta\");\r",
+                  "    pm.expect(data.meta).to.have.property(\"total_count\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains page items\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"items\");\r",
+                  "    pm.expect(data.items).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Page result count does not exceed limit\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.items.length).to.be.at.most(5);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Pagination total count is numeric\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.meta.total_count).to.be.a(\"number\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/pages/?limit=5&offset=0",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "pages",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API05 - Filter Pages by Page Type",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains page items\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"items\");\r",
+                  "    pm.expect(data.items).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"All returned pages match requested page type\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "    const expectedType = pm.environment.get(\"page_type\");\r",
+                  "\r",
+                  "    pm.expect(expectedType).to.be.a(\"string\").and.not.empty;\r",
+                  "\r",
+                  "    data.items.forEach(function (page) {\r",
+                  "        pm.expect(page.meta.type).to.eql(expectedType);\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Pagination metadata exists\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"meta\");\r",
+                  "    pm.expect(data.meta).to.have.property(\"total_count\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/pages/?type={{page_type}}",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "pages",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "{{page_type}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API06 - Search Pages by Title",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains page items\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"items\");\r",
+                  "    pm.expect(data.items).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Search returns matching results\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.items.length).to.be.greaterThan(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Returned pages contain valid titles\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    data.items.forEach(function (page) {\r",
+                  "        pm.expect(page.title).to.be.a(\"string\").and.not.empty;\r",
+                  "    });\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Pagination metadata exists\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"meta\");\r",
+                  "    pm.expect(data.meta.total_count).to.be.a(\"number\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/pages/?search=Bakery",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "pages",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "Bakery"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API07 - Get Nonexistent Page ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Error response contains a message\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.be.an(\"object\");\r",
+                  "    pm.expect(data).to.have.property(\"message\");\r",
+                  "    pm.expect(data.message).to.be.a(\"string\").and.not.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Error message indicates page does not exist\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.message.toLowerCase()).to.include(\r",
+                  "        \"no page matches\"\r",
+                  "    );\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/pages/999999/",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "pages",
+                "999999",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API08 - Get Page with Invalid ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is not a successful API response\", function () {\r",
+                  "    pm.expect(pm.response.code).to.not.equal(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains an HTML error page\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.include(\"<!DOCTYPE html>\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response content type is HTML\", function () {\r",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\"))\r",
+                  "        .to.include(\"text/html\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/ecmascript",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/pages/invalid-id/",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "pages",
+                "invalid-id",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API09 - Access Invalid API Endpoint",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is not successful\", function () {\r",
+                  "    pm.expect(pm.response.code).to.not.equal(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body is not empty\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.not.be.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Invalid endpoint does not return page results\", function () {\r",
+                  "    const body = pm.response.text();\r",
+                  "\r",
+                  "    pm.expect(body).to.not.include('\"items\"');\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/invalid-endpoint/",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "invalid-endpoint",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Media API",
+      "item": [
+        {
+          "name": "API10 - Get all images",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains image items\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"items\");\r",
+                  "    pm.expect(data.items).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Pagination metadata exists\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"meta\");\r",
+                  "    pm.expect(data.meta.total_count).to.be.a(\"number\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/images/",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "images",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API11 - Get All Documents",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains document items\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"items\");\r",
+                  "    pm.expect(data.items).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Pagination metadata exists\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"meta\");\r",
+                  "    pm.expect(data.meta.total_count).to.be.a(\"number\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/documents/",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "documents",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API12 - Attempt to Create Page",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"POST request is rejected\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 403, 405]);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is not successful\", function () {\r",
+                  "    pm.expect(pm.response.code).to.not.equal(200);\r",
+                  "    pm.expect(pm.response.code).to.not.equal(201);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body is not empty\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.not.be.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Page creation did not succeed\", function () {\r",
+                  "    pm.expect(pm.response.code).to.not.equal(201);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"API Test Page\",\r\n    \"slug\": \"api-test-page\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_url}}/pages/",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "pages",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API13 - Attempt to Update Page",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"PATCH request is rejected\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 403, 404, 405]);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Page update is unsuccessful\", function () {\r",
+                  "    pm.expect(pm.response.code).to.not.equal(200);\r",
+                  "    pm.expect(pm.response.code).to.not.equal(204);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body is not empty\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.not.be.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is not a successful update\", function () {\r",
+                  "    pm.expect(pm.response.code).to.not.be.oneOf([200, 204]);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\": \"Updated API Test Page\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{api_url}}/pages/{{page_id}}/",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "pages",
+                "{{page_id}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API14 - Attempt to Delete Page",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"DELETE request is rejected\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 403, 404, 405]);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Page deletion is unsuccessful\", function () {\r",
+                  "    pm.expect(pm.response.code).to.not.equal(200);\r",
+                  "    pm.expect(pm.response.code).to.not.equal(204);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body is not empty\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.not.be.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is not a successful deletion\", function () {\r",
+                  "    pm.expect(pm.response.code).to.not.be.oneOf([200, 204]);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/pages/{{page_id}}/",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "pages",
+                "{{page_id}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API15 - Get All Persons",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains person items\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"items\");\r",
+                  "    pm.expect(data.items).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Pagination metadata exists\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"meta\");\r",
+                  "    pm.expect(data.meta.total_count).to.be.a(\"number\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/persons/",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "persons",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API16 - Search Persons",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Response is JSON\", function () {\r\n    pm.response.to.be.json;\r\n});\r\n\r\npm.test(\"Search response contains person items\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data).to.have.property(\"items\");\r\n    pm.expect(data.items).to.be.an(\"array\");\r\n});\r\n\r\npm.test(\"Pagination metadata exists\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data).to.have.property(\"meta\");\r\n    pm.expect(data.meta.total_count).to.be.a(\"number\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/persons/?search=John",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "persons",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "John"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API17 - Search for a Nonexistent Page",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains an items array\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"items\");\r",
+                  "    pm.expect(data.items).to.be.an(\"array\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Search returns no matching pages\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.items).to.have.lengthOf(0);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Total count is zero\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data.meta.total_count).to.equal(0);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/pages/?search=qa-no-result-2026-unique-xyz",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "pages",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "qa-no-result-2026-unique-xyz",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API18 - Request Unsupported Response Format",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", function () {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body is not empty\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.not.be.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response has a content type\", function () {\r",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.exist;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response does not return XML content\", function () {\r",
+                  "    const contentType = pm.response.headers.get(\"Content-Type\") || \"\";\r",
+                  "\r",
+                  "    pm.expect(contentType.toLowerCase()).to.not.include(\"application/xml\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/ecmascript",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/pages/?format=xml",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "pages",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "format",
+                  "value": "xml"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API19 - Test Invalid Query Parameters",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Request returns a valid HTTP response\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 400, 404]);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response body is not empty\", function () {\r",
+                  "    pm.expect(pm.response.text()).to.not.be.empty;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response has a content type\", function () {\r",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.exist;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is not a server error\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.below(500);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/pages/?invalid_parameter_xyz=test123",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "pages",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "invalid_parameter_xyz",
+                  "value": "test123",
+                  "type": "text"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "API20 - Verify API Response Time",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response is valid JSON\", function () {\r",
+                  "    pm.response.to.be.json;\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"API response time is below 3000ms\", function () {\r",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Response contains page items\", function () {\r",
+                  "    const data = pm.response.json();\r",
+                  "\r",
+                  "    pm.expect(data).to.have.property(\"items\");\r",
+                  "    pm.expect(data.items).to.be.an(\"array\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{api_url}}/pages/",
+              "host": [
+                "{{api_url}}"
+              ],
+              "path": [
+                "pages",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
